@@ -24,18 +24,56 @@ export class CariRS {
   constructor(private url = 'http://yankes.kemkes.go.id/app/siranap') {}
 
   public async getProvinces(): Promise<Province> {
-    const { data } = await scrapeIt<Province>(`${this.url}/wilayah?jenis=1`, {
-      provinces: {
-        listItem: '#propinsi > option',
-        data: {
-          id: { attr: 'value' },
-          value: {}
-        }
-      }
-    })
     return {
-      provinces: data.provinces?.filter((_, i) => i > 0)
+      provinces: [
+        { id: '11prop', value: 'Aceh' },
+        { id: '12prop', value: 'Sumatera Utara' },
+        { id: '13prop', value: 'Sumatera Barat' },
+        { id: '14prop', value: 'R I A U' },
+        { id: '15prop', value: 'Jambi' },
+        { id: '16prop', value: 'Sumatera Selatan' },
+        { id: '17prop', value: 'Bengkulu' },
+        { id: '18prop', value: 'Lampung' },
+        { id: '19prop', value: 'Kepulauan Bangka Belitung' },
+        { id: '20prop', value: 'Kepulauan Riau' },
+        { id: '31prop', value: 'Dki Jakarta' },
+        { id: '32prop', value: 'Jawa Barat' },
+        { id: '33prop', value: 'Jawa Tengah' },
+        { id: '34prop', value: 'D I Yogyakarta' },
+        { id: '35prop', value: 'Jawa Timur' },
+        { id: '36prop', value: 'Banten' },
+        { id: '51prop', value: 'Bali' },
+        { id: '52prop', value: 'Nusa Tenggara Barat' },
+        { id: '53prop', value: 'Nusa Tenggara Timur' },
+        { id: '61prop', value: 'Kalimantan Barat' },
+        { id: '62prop', value: 'Kalimantan Tengah' },
+        { id: '63prop', value: 'Kalimantan Selatan' },
+        { id: '64prop', value: 'Kalimantan Timur' },
+        { id: '65prop', value: 'Kalimantan Utara' },
+        { id: '71prop', value: 'Sulawesi Utara' },
+        { id: '72prop', value: 'Sulawesi Tengah' },
+        { id: '73prop', value: 'Sulawesi Selatan' },
+        { id: '74prop', value: 'Sulawesi Tenggara' },
+        { id: '75prop', value: 'Gorontalo' },
+        { id: '76prop', value: 'Sulawesi Barat' },
+        { id: '81prop', value: 'Maluku' },
+        { id: '82prop', value: 'Maluku Utara' },
+        { id: '91prop', value: 'Papua Barat' },
+        { id: '92prop', value: 'Papua' }
+      ]
     }
+    // const { data } = await scrapeIt<Province>(`${this.url}/wilayah?jenis=1`, {
+    //   provinces: {
+    //     listItem: '#propinsi > option',
+    //     data: {
+    //       id: { attr: 'value' },
+    //       value: {}
+    //     }
+    //   }
+    // })
+    // return {
+    //   provinces: data.provinces?.filter((_, i) => i > 0)
+    // }
   }
 
   public async getCities(provinceId: string): Promise<City> {

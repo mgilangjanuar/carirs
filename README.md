@@ -99,3 +99,17 @@ cariRS.getHospitals('covid', '31prop', '3171')
     info?: string,
     phoneNumber?: string
   }>`
+
+- **getBedDetails(hospitalId: string)**
+
+  *[WIP]*
+
+- **getMaps(hospitalId: string)**
+
+  *[WIP]*
+
+## License
+
+[MIT](./LICENSE.md)
+
+![high-five](https://media0.giphy.com/media/26BREWfA5cRZJbMd2/giphy.gif?cid=ecf05e4721370e49dc41cdc59e140f4c0337fcaa46553ddb&rid=giphy.gif)
