@@ -20,6 +20,7 @@ const { CariRS } = require('./dist')
 const cariRS = new CariRS()
 cariRS.getProvinces()
   .then(data => {
+    console.log(data)
     // {
     //   provinces: [
     //     { id: '11prop', value: 'Aceh' },
@@ -27,12 +28,12 @@ cariRS.getProvinces()
     //     { id: '13prop', value: 'Sumatera Barat' },
     //     { id: '14prop', value: 'R I A U' }
     //     ...
-    console.log(data)
   })
   .catch(err => console.error(err))
 
 cariRS.getCities('31prop')
   .then(data => {
+    console.log(data)
     // {
     //   cities: [
     //     { id: '3101', value: 'Kepulauan Seribu' },
@@ -41,12 +42,12 @@ cariRS.getCities('31prop')
     //     { id: '3173', value: 'Kota Jakarta Pusat' },
     //     { id: '3174', value: 'Kota Jakarta Barat' }
     //     ...
-    console.log(data)
   })
   .catch(err => console.error(err))
 
 cariRS.getHospitals('covid', '31prop', '3171')
   .then(data => {
+    console.log(data)
     // {
     //   hospitals: [
     //     {
@@ -74,7 +75,27 @@ cariRS.getHospitals('covid', '31prop', '3171')
     //       phoneNumber: null
     //     }
     //    ...
-    console.log(data)
   })
   .catch(err => console.error(err))
 ```
+
+## Available Methods
+
+- **getProvinces()**
+
+  *return* `Promise<{ provinces: { id: string, value: string }[] }>`
+
+- **getCities(provinceId: string)**
+
+  *return* `Promise<{ cities: { id: string, value: string }[] }>`
+
+- **getHospitals(type: covid | noncovid, provinceId: string, cityId: string)**
+
+  *return* `Promise<{
+    id: string,
+    name: string,
+    address: string,
+    availableRoom?: number,
+    info?: string,
+    phoneNumber?: string
+  }>`

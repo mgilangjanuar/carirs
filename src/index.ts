@@ -96,8 +96,8 @@ export class CariRS {
           info: hospital.info.replace(/\./gi, '')
         } : {
           id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
-          address: hospital.address.split('<br>')?.[0],
-          phoneNumber: hospital.phoneNumber.split('<br>')?.[1],
+          address: hospital.address.split('<br>')?.[0] || null,
+          phoneNumber: hospital.phoneNumber.split('<br>')?.[1] || null,
         }
       }))
     }
