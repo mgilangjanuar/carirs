@@ -20,6 +20,15 @@ interface Hospital {
   }[]
 }
 
+interface Maps {
+  maps: {
+    url: string,
+    urlAlt: string,
+    lat: number,
+    long: number
+  }
+}
+
 export class CariRS {
   constructor(private url = 'http://yankes.kemkes.go.id/app/siranap') {}
 
@@ -138,6 +147,19 @@ export class CariRS {
           phoneNumber: hospital.phoneNumber.split('<br>')?.[1] || null,
         }
       }))
+    }
+  }
+
+  public async getMaps(hospitalId: string): Promise<Maps> {
+    const { data: dataResp } = await axios.get(`http://yankes.kemkes.go.id/app/siranap/rumah_sakit/${hospitalId}`)
+    const { data } = dataResp
+    return {
+      maps: {
+        url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.RUMAH_SAKIT)}`,
+        urlAlt: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.ALAMAT)}`,
+        lat: Number(data.alt),
+        long: Number(data.long)
+      }
     }
   }
 }

@@ -60,3 +60,17 @@ cariRS.getHospitals('covid', '31prop', '3171')
     console.log(data)
   })
   .catch(err => console.error(err))
+
+cariRS.getMaps('3171045')
+  .then(data => {
+    console.log(data)
+    // {
+    //   maps: {
+    //     url: 'https://www.google.com/maps/search/?api=1&query=RS%20Umum%20Jakarta',
+    //     urlAlt: 'https://www.google.com/maps/search/?api=1&query=Jl.%20Jend.Sudirman%20Kav.49%2CJaksel',
+    //     lat: -6.2272,
+    //     long: 106.802
+    //   }
+    // }
+  })
+  .catch(err => console.error(err))
