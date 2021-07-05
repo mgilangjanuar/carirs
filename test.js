@@ -74,3 +74,26 @@ cariRS.getMaps('3171045')
     // }
   })
   .catch(err => console.error(err))
+
+cariRS.getBedDetails('covid', '3171515')
+  .then(data => {
+    console.log(data)
+    // {
+    //   bedDetails: [
+    //     {
+    //       updatedTime: '05-07-2021 08:26:51',
+    //       title: 'ICU Tekanan Negatif dengan Ventilator',
+    //       total: 4,
+    //       available: 0
+    //     },
+    //     {
+    //       updatedTime: '05-07-2021 08:35:31',
+    //       title: 'Isolasi Tekanan Negatif',
+    //       total: 85,
+    //       available: 3
+    //     },
+    //     ...
+    //   ]
+    // }
+  })
+  .catch(err => console.error(err))

@@ -29,7 +29,21 @@ interface Maps {
   }
 }
 
+interface BedDetails {
+  bedDetails: {
+    updatedTime: string,
+    title: string,
+    total: number,
+    available: number
+  }[]
+}
+
 export class CariRS {
+  private bedTypes = {
+    covid: 1,
+    noncovid: 2
+  }
+
   constructor(private url = 'http://yankes.kemkes.go.id/app/siranap') {}
 
   public async getProvinces(): Promise<Province> {
@@ -93,7 +107,7 @@ export class CariRS {
   }
 
   public async getHospitals(type: 'covid' | 'noncovid', provinceId: string, cityId: string): Promise<Hospital> {
-    const { data } = await scrapeIt<Hospital>(`${this.url}/rumah_sakit?jenis=${type === 'covid' ? '1' : '2'}&propinsi=${provinceId}&kabkota=${cityId}`, {
+    const { data } = await scrapeIt<Hospital>(`${this.url}/rumah_sakit?jenis=${this.bedTypes[type]}&propinsi=${provinceId}&kabkota=${cityId}`, {
       hospitals: {
         listItem: '.row > .cardRS',
         data: type === 'covid' ? {
@@ -160,6 +174,33 @@ export class CariRS {
         lat: Number(data.alt),
         long: Number(data.long)
       }
+    }
+  }
+
+  public async getBedDetails(type: 'covid' | 'noncovid', hospitalId: string): Promise<BedDetails> {
+    const { data } = await scrapeIt<BedDetails>(`${this.url}/tempat_tidur?jenis=${this.bedTypes[type]}&kode_rs=${hospitalId}`, {
+      bedDetails: {
+        listItem: '.row > .col-md-4.mb-3',
+        data: {
+          updatedTime: '.card-header > div > .ml-auto.mt-1',
+          title: '.card-body > h5',
+          total: {
+            selector: '.card-body > .col-md-12 .col-4 div h1',
+            eq: 0
+          },
+          available: {
+            selector: '.card-body > .col-md-12 .col-4 div h1',
+            eq: 1
+          }
+        }
+      }
+    })
+    return {
+      bedDetails: data.bedDetails.map(bed => ({
+        ...bed,
+        total: Number(bed.total),
+        available: Number(bed.available)
+      }))
     }
   }
 }
