@@ -14,7 +14,7 @@ $ yarn add carirs -S
 
 ## Example
 
-javascript```
+```
 const { CariRS } = require('./dist')
 
 const cariRS = new CariRS()
