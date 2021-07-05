@@ -1,0 +1,26 @@
+{
+  "name": "carirs",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "author": "M Gilang Januar <mgilangjanuar.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "nodemon dist/index.js --watch",
+    "build": "rimraf dist && eslint --fix -c .eslintrc.js --ext .ts . && tsc"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "scrape-it": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "eslint": "^7.30.0",
+    "nodemon": "^2.0.9",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.5"
+  }
+}
