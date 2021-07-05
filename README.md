@@ -15,7 +15,7 @@ $ yarn add carirs -S
 ## Example
 
 ```
-const { CariRS } = require('./dist')
+const { CariRS } = require('carirs')
 
 const cariRS = new CariRS()
 cariRS.getProvinces()

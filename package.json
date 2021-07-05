@@ -4,6 +4,9 @@
   "main": "dist/index.js",
   "author": "M Gilang Januar <mgilangjanuar.com>",
   "license": "MIT",
+  "repository": {
+    "url": "https://github.com/mgilangjanuar/carirs"
+  },
   "private": false,
   "scripts": {
     "start": "nodemon dist/index.js --watch",
