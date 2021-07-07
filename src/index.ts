@@ -23,7 +23,8 @@ interface Hospital {
 interface Maps {
   maps: {
     url: string,
-    urlAlt: string,
+    urlAlt1: string,
+    urlAlt2: string,
     lat: number,
     long: number
   }
@@ -148,7 +149,7 @@ export class CariRS {
       }
     })
     return {
-      hospitals: data.hospitals?.map(hospital => ({
+      hospitals: data.hospitals?.map((hospital: any) => ({
         ...hospital,
         ...type === 'covid' ? {
           id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
@@ -170,7 +171,8 @@ export class CariRS {
     return {
       maps: {
         url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.RUMAH_SAKIT)}`,
-        urlAlt: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.ALAMAT)}`,
+        urlAlt1: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.ALAMAT)}`,
+        urlAlt2: `https://www.google.com/maps/search/?api=1&query=${data.alt},${data.long}`,
         lat: Number(data.alt),
         long: Number(data.long)
       }
