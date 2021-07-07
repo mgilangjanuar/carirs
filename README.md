@@ -4,7 +4,7 @@ Getting hospitals availability data from Kementerian Kesehatan Republik Indonesi
 
 ## Installation
 
-```
+```shell
 $ npm i carirs -S
 
 // or with yarn
@@ -14,7 +14,7 @@ $ yarn add carirs -S
 
 ## Example
 
-```
+```js
 const { CariRS } = require('carirs')
 
 const cariRS = new CariRS()
