@@ -139,7 +139,7 @@ cariRS.getBedDetails('covid', '3171515')
     }
   }>`
 
-- **getBedDetails(hospitalId: string)**
+- **getBedDetails(type: covid | noncovid, hospitalId: string)**
 
   *return* `Promise<{
     bedDetails: {

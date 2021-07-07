@@ -75,7 +75,7 @@ cariRS.getMaps('3171045')
   })
   .catch(err => console.error(err))
 
-cariRS.getBedDetails('covid', '3171515')
+cariRS.getBedDetails('covid', '3171072')
   .then(data => {
     console.log(data)
     // {
