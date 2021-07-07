@@ -53,17 +53,17 @@ export class CariRS {
         { id: '11prop', value: 'Aceh' },
         { id: '12prop', value: 'Sumatera Utara' },
         { id: '13prop', value: 'Sumatera Barat' },
-        { id: '14prop', value: 'R I A U' },
+        { id: '14prop', value: 'Riau' },
         { id: '15prop', value: 'Jambi' },
         { id: '16prop', value: 'Sumatera Selatan' },
         { id: '17prop', value: 'Bengkulu' },
         { id: '18prop', value: 'Lampung' },
         { id: '19prop', value: 'Kepulauan Bangka Belitung' },
         { id: '20prop', value: 'Kepulauan Riau' },
-        { id: '31prop', value: 'Dki Jakarta' },
+        { id: '31prop', value: 'DKI Jakarta' },
         { id: '32prop', value: 'Jawa Barat' },
         { id: '33prop', value: 'Jawa Tengah' },
-        { id: '34prop', value: 'D I Yogyakarta' },
+        { id: '34prop', value: 'DI Yogyakarta' },
         { id: '35prop', value: 'Jawa Timur' },
         { id: '36prop', value: 'Banten' },
         { id: '51prop', value: 'Bali' },
@@ -86,18 +86,6 @@ export class CariRS {
         { id: '92prop', value: 'Papua' }
       ]
     }
-    // const { data } = await scrapeIt<Province>(`${this.url}/wilayah?jenis=1`, {
-    //   provinces: {
-    //     listItem: '#propinsi > option',
-    //     data: {
-    //       id: { attr: 'value' },
-    //       value: {}
-    //     }
-    //   }
-    // })
-    // return {
-    //   provinces: data.provinces?.filter((_, i) => i > 0)
-    // }
   }
 
   public async getCities(provinceId: string): Promise<City> {

@@ -84,7 +84,8 @@ cariRS.getMaps('3171045')
     // {
     //   maps: {
     //     url: 'https://www.google.com/maps/search/?api=1&query=RS%20Umum%20Jakarta',
-    //     urlAlt: 'https://www.google.com/maps/search/?api=1&query=Jl.%20Jend.Sudirman%20Kav.49%2CJaksel',
+    //     urlAlt1: 'https://www.google.com/maps/search/?api=1&query=Jl.%20Jend.Sudirman%20Kav.49%2CJaksel',
+    //     urlAlt2: 'https://www.google.com/maps/search/?api=1&query=-6.2272,106.802',
     //     lat: -6.2272,
     //     long: 106.802
     //   }
@@ -155,7 +156,8 @@ cariRS.getBedDetails('covid', '3171515')
   *return* `Promise<{
     maps: {
       url: string,
-      urlAlt: string,
+      urlAlt1: string,
+      urlAlt2: string,
       lat: number,
       long: number
     }
