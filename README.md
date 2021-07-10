@@ -137,21 +137,28 @@ cariRS.getBedDetails('covid', '3171515')
       id: string,
       name: string,
       address: string,
-      availableRoom?: number,
+      queue?: number,
       info?: string,
-      phoneNumber?: string
-    }
+      phoneNumber?: string,
+      availableRoom?: number,
+      availableRooms?: {
+        name: string,
+        available: number,
+        info?: string
+      }[]
+    }[]
   }>`
 
 - **getBedDetails(type: covid | noncovid, hospitalId: string)**
 
   *return* `Promise<{
     bedDetails: {
-      updatedTime: string,
-      title: string,
-      total: number,
-      available: number
-    }[]
+    updatedTime: string,
+    title: string,
+    total: number,
+    available: number,
+    queue?: number
+  }[]
   }>`
 
 - **getMaps(hospitalId: string)**
