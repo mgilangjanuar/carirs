@@ -14,9 +14,15 @@ interface Hospital {
     id: string,
     name: string,
     address: string,
-    availableRoom?: number,
+    queue?: number,
     info?: string,
-    phoneNumber?: string
+    phoneNumber?: string,
+    availableRoom?: number,
+    availableRooms?: {
+      name: string,
+      available: number,
+      info?: string
+    }[]
   }[]
 }
 
@@ -35,7 +41,8 @@ interface BedDetails {
     updatedTime: string,
     title: string,
     total: number,
-    available: number
+    available: number,
+    queue?: number
   }[]
 }
 
@@ -95,43 +102,50 @@ export class CariRS {
     }
   }
 
-  public async getHospitals(type: 'covid' | 'noncovid', provinceId: string, cityId: string): Promise<Hospital> {
-    const { data } = await scrapeIt<Hospital>(`${this.url}/rumah_sakit?jenis=${this.bedTypes[type]}&propinsi=${provinceId}&kabkota=${cityId}`, {
+  public async getHospitals(type: 'covid' | 'noncovid', provinceId: string, cityId?: string): Promise<Hospital> {
+    const { data } = await scrapeIt<Hospital>(`${this.url}/rumah_sakit?jenis=${this.bedTypes[type]}&propinsi=${provinceId}&kabkota=${cityId || ''}`, {
       hospitals: {
         listItem: '.row > .cardRS',
-        data: type === 'covid' ? {
+        data: {
           id: {
-            selector: '.card-body .col-md-5 > .text-right > a',
+            selector: '.card-footer > div > a',
             attr: 'href'
           },
           name: { attr: 'data-string' },
-          address: '.card-body .col-md-7 > p',
-          availableRoom: {
-            selector: '.card-body .col-md-5 > .mt-2.text-right > p',
+          phoneNumber: {
+            selector: '.card-footer > div > span',
             eq: 0
           },
-          info: {
-            selector: '.card-body .col-md-5 > .mt-2.text-right > p',
-            eq: 2
-          },
-          phoneNumber: {
-            selector: '.card-body .col-md-5 > .mt-2.text-right > p',
-            eq: 3
-          }
-        } : {
-          id: {
-            selector: '.card-body > div.d-inline > a',
-            attr: 'href',
-            eq: 1
-          },
-          name: { attr: 'data-string' },
-          address: {
-            selector: '.card-body > p.mb-0',
-            how: 'html'
-          },
-          phoneNumber: {
-            selector: '.card-body > p.mb-0',
-            how: 'html'
+          ...type === 'covid' ? {
+            address: '.card-body .col-md-7 > p',
+            availableRoom: {
+              selector: '.card-body .col-md-5 > p',
+              eq: 1
+            },
+            queue: {
+              selector: '.card-body .col-md-5 > p',
+              eq: 2
+            },
+            info: {
+              selector: '.card-body .col-md-5 > p',
+              eq: 3
+            },
+          } : {
+            address: '.card-body .col-md-5 > p.mb-0',
+            availableRooms: {
+              listItem: '.card-body .col-md-7 .col-md-4',
+              data: {
+                available: {
+                  selector: '.card-body > div',
+                  eq: 0
+                },
+                name: {
+                  selector: '.card-body > div',
+                  eq: 1
+                },
+                info: '.card-footer > div'
+              }
+            }
           }
         }
       }
@@ -142,12 +156,13 @@ export class CariRS {
         ...type === 'covid' ? {
           id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
           availableRoom: Number(hospital.availableRoom.toString().replace(/[^\d]/gi, '') || '0'),
-          phoneNumber: hospital.phoneNumber.toString().replace(/[^\d]/gi, '') || null,
+          queue: Number(hospital.queue.toString().replace(/[^\d]/gi, '') || '0'),
+          phoneNumber: hospital.phoneNumber.toString().replace(/[^\d\s\/]/gi, '').replace(/^\s*|\s*$/gi, '') || null,
           info: hospital.info.replace(/\./gi, '')
         } : {
           id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
-          address: hospital.address.split('<br>')?.[0] || null,
-          phoneNumber: hospital.phoneNumber.split('<br>')?.[1] || null,
+          phoneNumber: hospital.phoneNumber.toString().replace(/[^\d\s\/]/gi, '').replace(/^\s*|\s*$/gi, '') || null,
+          availableRooms: hospital.availableRooms?.map(bed => ({ ...bed, available: Number(bed.available) }))
         }
       }))
     }
@@ -170,17 +185,26 @@ export class CariRS {
   public async getBedDetails(type: 'covid' | 'noncovid', hospitalId: string): Promise<BedDetails> {
     const { data } = await scrapeIt<BedDetails>(`${this.url}/tempat_tidur?jenis=${this.bedTypes[type]}&kode_rs=${hospitalId}`, {
       bedDetails: {
-        listItem: '.row > .col-md-4.mb-3',
+        listItem: '.container .row > .col-md-12.mb-2',
         data: {
-          updatedTime: '.card-header > div > .ml-auto.mt-1',
-          title: '.card-body > h5',
+          updatedTime: {
+            selector: '.card-body > .row > .col-md-6 > p > small'
+          },
+          title: {
+            selector: '.card-body > .row > .col-md-6 > p',
+            how: 'html'
+          },
           total: {
-            selector: '.card-body > .col-md-12 .col-4 div h1',
+            selector: '.card-body .col-md-6 > .row.pt-2.pt-md-0 > .col-md-4.col-4',
             eq: 0
           },
           available: {
-            selector: '.card-body > .col-md-12 .col-4 div h1',
+            selector: '.card-body .col-md-6 > .row.pt-2.pt-md-0 > .col-md-4.col-4',
             eq: 1
+          },
+          queue: {
+            selector: '.card-body .col-md-6 > .row.pt-2.pt-md-0 > .col-md-4.col-4',
+            eq: 2
           }
         }
       }
@@ -188,8 +212,11 @@ export class CariRS {
     return {
       bedDetails: data.bedDetails.map(bed => ({
         ...bed,
-        total: Number(bed.total),
-        available: Number(bed.available)
+        title: bed.title?.split('<br>')[0].replace(/^\s*|\s*$/gi, ''),
+        updatedTime: bed.updatedTime?.replace(/Update\ /gi, ''),
+        total: Number(bed.total.toString().replace(/[^\d]/gi, '') || '0'),
+        available: Number(bed.available.toString().replace(/[^\d]/gi, '') || '0'),
+        queue: bed.queue ? Number(bed.queue.toString().replace(/[^\d]/gi, '')) : undefined
       }))
     }
   }

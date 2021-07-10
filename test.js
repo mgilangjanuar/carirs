@@ -3,6 +3,7 @@ const { CariRS } = require('./dist')
 const cariRS = new CariRS()
 cariRS.getProvinces()
   .then(data => {
+    console.log(data)
     // {
     //   provinces: [
     //     { id: '11prop', value: 'Aceh' },
@@ -10,12 +11,12 @@ cariRS.getProvinces()
     //     { id: '13prop', value: 'Sumatera Barat' },
     //     { id: '14prop', value: 'R I A U' }
     //     ...
-    console.log(data)
   })
   .catch(err => console.error(err))
 
 cariRS.getCities('31prop')
   .then(data => {
+    console.log(data)
     // {
     //   cities: [
     //     { id: '3101', value: 'Kepulauan Seribu' },
@@ -24,40 +25,40 @@ cariRS.getCities('31prop')
     //     { id: '3173', value: 'Kota Jakarta Pusat' },
     //     { id: '3174', value: 'Kota Jakarta Barat' }
     //     ...
-    console.log(data)
   })
   .catch(err => console.error(err))
 
-cariRS.getHospitals('covid', '31prop', '3171')
+cariRS.getHospitals('noncovid', '31prop', '3171')
   .then(data => {
+    console.log(JSON.stringify(data, null, 2))
     // {
     //   hospitals: [
     //     {
-    //       id: '3171072',
-    //       name: 'RS Umum Dr. Suyoto Pusrehab Kemhan',
-    //       address: 'Jl. RC. Veteran No. 178 Bintaro',
-    //       availableRoom: 6,
-    //       info: 'diupdate 9 jam yang lalu',
-    //       phoneNumber: '0217342012'
-    //     },
-    //     {
-    //       id: '3171045',
-    //       name: 'RS Umum Jakarta',
-    //       address: 'Jl. Jend.Sudirman Kav.49,Jaksel',
-    //       availableRoom: 4,
-    //       info: 'diupdate 9 jam yang lalu',
-    //       phoneNumber: null
-    //     },
-    //     {
-    //       id: '3171784',
-    //       name: 'RS Umum Yadika',
-    //       address: 'Jl. Ciputat Raya No. 5',
-    //       availableRoom: 2,
-    //       info: 'diupdate 7 jam yang lalu',
-    //       phoneNumber: null
+    //       "id": "3171012",
+    //       "name": "RSUP Fatmawati",
+    //       "phoneNumber": "021 7501524 / 7660552",
+    //       "address": "Jl. RS Fatmawati Cilandak,Jaksel",
+    //       "availableRooms": [
+    //         {
+    //           "available": 4,
+    //           "name": "Bed Kosong Kelas I",
+    //           "info": "diupdate kurang dari 1 menit yang lalu"
+    //         },
+    //         {
+    //           "available": 9,
+    //           "name": "Bed Kosong Kelas II",
+    //           "info": "diupdate kurang dari 1 menit yang lalu"
+    //         },
+    //         {
+    //           "available": 17,
+    //           "name": "Bed Kosong Kelas III",
+    //           "info": "diupdate kurang dari 1 menit yang lalu"
+    //         }
+    //       ]
     //     }
-    //    ...
-    console.log(data)
+    //     ...
+    //   ]
+    // }
   })
   .catch(err => console.error(err))
 
@@ -84,14 +85,16 @@ cariRS.getBedDetails('covid', '3171072')
     //     {
     //       updatedTime: '05-07-2021 08:26:51',
     //       title: 'ICU Tekanan Negatif dengan Ventilator',
-    //       total: 4,
+    //       total: 54,
     //       available: 0
+    //       queue: 4
     //     },
     //     {
     //       updatedTime: '05-07-2021 08:35:31',
     //       title: 'Isolasi Tekanan Negatif',
     //       total: 85,
     //       available: 3
+    //       queue: undefined
     //     },
     //     ...
     //   ]
