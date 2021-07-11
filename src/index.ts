@@ -1,5 +1,8 @@
 import axios from 'axios'
 import scrapeIt from 'scrape-it'
+import cities from './data/cities.json'
+import hospitals from './data/hospitals.json'
+import provinces from './data/provinces.json'
 
 interface Province {
   provinces: { id: string, value: string }[]
@@ -14,6 +17,14 @@ interface Hospital {
     id: string,
     name: string,
     address: string,
+    province?: {
+      id: string,
+      value: string
+    },
+    city?: {
+      id: string,
+      value: string
+    },
     queue?: number,
     info?: string,
     phoneNumber?: string,
@@ -47,125 +58,125 @@ interface BedDetails {
 }
 
 export class CariRS {
-  private bedTypes = {
+  private static BED_TYPES = {
     covid: 1,
     noncovid: 2
   }
 
   constructor(private url = 'http://yankes.kemkes.go.id/app/siranap') {}
 
-  public async getProvinces(): Promise<Province> {
+  public getProvinces(): Province {
+    return { provinces: provinces }
+  }
+
+  public findProvinces(name: string): Province {
+    return { provinces: provinces.filter(prov => prov.value.match(new RegExp(name, 'gi'))) }
+  }
+
+  public getCities(provinceId: string): City {
     return {
-      provinces: [
-        { id: '11prop', value: 'Aceh' },
-        { id: '12prop', value: 'Sumatera Utara' },
-        { id: '13prop', value: 'Sumatera Barat' },
-        { id: '14prop', value: 'Riau' },
-        { id: '15prop', value: 'Jambi' },
-        { id: '16prop', value: 'Sumatera Selatan' },
-        { id: '17prop', value: 'Bengkulu' },
-        { id: '18prop', value: 'Lampung' },
-        { id: '19prop', value: 'Kepulauan Bangka Belitung' },
-        { id: '20prop', value: 'Kepulauan Riau' },
-        { id: '31prop', value: 'DKI Jakarta' },
-        { id: '32prop', value: 'Jawa Barat' },
-        { id: '33prop', value: 'Jawa Tengah' },
-        { id: '34prop', value: 'DI Yogyakarta' },
-        { id: '35prop', value: 'Jawa Timur' },
-        { id: '36prop', value: 'Banten' },
-        { id: '51prop', value: 'Bali' },
-        { id: '52prop', value: 'Nusa Tenggara Barat' },
-        { id: '53prop', value: 'Nusa Tenggara Timur' },
-        { id: '61prop', value: 'Kalimantan Barat' },
-        { id: '62prop', value: 'Kalimantan Tengah' },
-        { id: '63prop', value: 'Kalimantan Selatan' },
-        { id: '64prop', value: 'Kalimantan Timur' },
-        { id: '65prop', value: 'Kalimantan Utara' },
-        { id: '71prop', value: 'Sulawesi Utara' },
-        { id: '72prop', value: 'Sulawesi Tengah' },
-        { id: '73prop', value: 'Sulawesi Selatan' },
-        { id: '74prop', value: 'Sulawesi Tenggara' },
-        { id: '75prop', value: 'Gorontalo' },
-        { id: '76prop', value: 'Sulawesi Barat' },
-        { id: '81prop', value: 'Maluku' },
-        { id: '82prop', value: 'Maluku Utara' },
-        { id: '91prop', value: 'Papua Barat' },
-        { id: '92prop', value: 'Papua' }
-      ]
+      cities: cities.find(data => data.id === provinceId).cities
     }
   }
 
-  public async getCities(provinceId: string): Promise<City> {
-    const { data } = await axios.get(`${this.url}/Kabkota?kode_propinsi=${provinceId}`)
+  public findCities(name: string): City {
     return {
-      cities: data.data.map(city => ({ id: city.kode_kabkota, value: city.nama_kabkota }))
+      cities: cities.reduce((res, prov) => [...res, ...prov.cities.filter(city => city.value.match(new RegExp(name, 'gi')))], [])
     }
   }
 
-  public async getHospitals(type: 'covid' | 'noncovid', provinceId: string, cityId?: string): Promise<Hospital> {
-    const { data } = await scrapeIt<Hospital>(`${this.url}/rumah_sakit?jenis=${this.bedTypes[type]}&propinsi=${provinceId}&kabkota=${cityId || ''}`, {
-      hospitals: {
-        listItem: '.row > .cardRS',
-        data: {
-          id: {
-            selector: '.card-footer > div > a',
-            attr: 'href'
-          },
-          name: { attr: 'data-string' },
-          phoneNumber: {
-            selector: '.card-footer > div > span',
-            eq: 0
-          },
-          ...type === 'covid' ? {
-            address: '.card-body .col-md-7 > p',
-            availableRoom: {
-              selector: '.card-body .col-md-5 > p',
-              eq: 1
+  public async getHospitals(type: 'covid' | 'noncovid', provinceId?: string, cityId?: string): Promise<Hospital> {
+    try {
+      const { data } = await scrapeIt<Hospital>(`${this.url}/rumah_sakit?jenis=${CariRS.BED_TYPES[type]}&propinsi=${provinceId}&kabkota=${cityId || ''}`, {
+        hospitals: {
+          listItem: '.row > .cardRS',
+          data: {
+            id: {
+              selector: '.card-footer > div > a',
+              attr: 'href'
             },
-            queue: {
-              selector: '.card-body .col-md-5 > p',
-              eq: 2
+            name: { attr: 'data-string' },
+            phoneNumber: {
+              selector: '.card-footer > div > span',
+              eq: 0
             },
-            info: {
-              selector: '.card-body .col-md-5 > p',
-              eq: 3
-            },
-          } : {
-            address: '.card-body .col-md-5 > p.mb-0',
-            availableRooms: {
-              listItem: '.card-body .col-md-7 .col-md-4',
-              data: {
-                available: {
-                  selector: '.card-body > div',
-                  eq: 0
-                },
-                name: {
-                  selector: '.card-body > div',
-                  eq: 1
-                },
-                info: '.card-footer > div'
+            ...type === 'covid' ? {
+              address: '.card-body .col-md-7 > p',
+              availableRoom: {
+                selector: '.card-body .col-md-5 > p',
+                eq: 1
+              },
+              queue: {
+                selector: '.card-body .col-md-5 > p',
+                eq: 2
+              },
+              info: {
+                selector: '.card-body .col-md-5 > p',
+                eq: 3
+              },
+            } : {
+              address: '.card-body .col-md-5 > p.mb-0',
+              availableRooms: {
+                listItem: '.card-body .col-md-7 .col-md-4',
+                data: {
+                  available: {
+                    selector: '.card-body > div',
+                    eq: 0
+                  },
+                  name: {
+                    selector: '.card-body > div',
+                    eq: 1
+                  },
+                  info: '.card-footer > div'
+                }
               }
             }
           }
         }
+      })
+      return {
+        hospitals: data.hospitals?.map((hospital: any) => ({
+          ...hospital,
+          ...type === 'covid' ? {
+            id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
+            availableRoom: Number(hospital.availableRoom.toString().replace(/[^\d]/gi, '') || '0'),
+            queue: Number(hospital.queue.toString().replace(/[^\d]/gi, '') || '0'),
+            phoneNumber: hospital.phoneNumber.toString().replace(/[^\d\s\/]/gi, '').replace(/^\s*|\s*$/gi, '') || null,
+            info: hospital.info.replace(/\./gi, '')
+          } : {
+            id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
+            phoneNumber: hospital.phoneNumber.toString().replace(/[^\d\s\/]/gi, '').replace(/^\s*|\s*$/gi, '') || null,
+            availableRooms: hospital.availableRooms?.map(bed => ({ ...bed, available: Number(bed.available) }))
+          }
+        }))
       }
-    })
-    return {
-      hospitals: data.hospitals?.map((hospital: any) => ({
-        ...hospital,
-        ...type === 'covid' ? {
-          id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
-          availableRoom: Number(hospital.availableRoom.toString().replace(/[^\d]/gi, '') || '0'),
-          queue: Number(hospital.queue.toString().replace(/[^\d]/gi, '') || '0'),
-          phoneNumber: hospital.phoneNumber.toString().replace(/[^\d\s\/]/gi, '').replace(/^\s*|\s*$/gi, '') || null,
-          info: hospital.info.replace(/\./gi, '')
-        } : {
-          id: hospital.id.replace(/^.*kode_rs=/gi, '').replace(/\&.*=\d*/gi, ''),
-          phoneNumber: hospital.phoneNumber.toString().replace(/[^\d\s\/]/gi, '').replace(/^\s*|\s*$/gi, '') || null,
-          availableRooms: hospital.availableRooms?.map(bed => ({ ...bed, available: Number(bed.available) }))
+    } catch (error) {
+      const match = hospital => {
+        let result = hospital.tags.includes(type)
+        if (provinceId) {
+          result = result && hospital.province.id === provinceId
         }
-      }))
+        if (cityId) {
+          result = result && hospital.city.id === cityId
+        }
+        return result
+      }
+      return { hospitals: hospitals.filter(match) }
     }
+  }
+
+  public findHospitals(name: string, type?: 'covid' | 'noncovid'): Hospital {
+    const match = hospital => {
+      const result = hospital.name.match(new RegExp(name, 'gi'))
+                  || hospital.address.match(new RegExp(name, 'gi'))
+                  || hospital.province.value.match(new RegExp(name, 'gi'))
+                  || hospital.city.value.match(new RegExp(name, 'gi'))
+      if (type) {
+        return result && hospital.tags.includes(type)
+      }
+      return result
+    }
+    return { hospitals: hospitals.filter(match) }
   }
 
   public async getMaps(hospitalId: string): Promise<Maps> {
@@ -183,7 +194,7 @@ export class CariRS {
   }
 
   public async getBedDetails(type: 'covid' | 'noncovid', hospitalId: string): Promise<BedDetails> {
-    const { data } = await scrapeIt<BedDetails>(`${this.url}/tempat_tidur?jenis=${this.bedTypes[type]}&kode_rs=${hospitalId}`, {
+    const { data } = await scrapeIt<BedDetails>(`${this.url}/tempat_tidur?jenis=${CariRS.BED_TYPES[type]}&kode_rs=${hospitalId}`, {
       bedDetails: {
         listItem: '.container .row > .col-md-12.mb-2',
         data: {
