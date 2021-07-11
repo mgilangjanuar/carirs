@@ -130,7 +130,7 @@ cariRS.getBedDetails('covid', '3171515')
 
   *return* `Promise<{ cities: { id: string, value: string }[] }>`
 
-- **getHospitals(type: covid | noncovid, provinceId: string, cityId: string)**
+- **getHospitals(type: covid | noncovid, provinceId?: string, cityId?: string)**
 
   *return* `Promise<{
     hospitals: {
@@ -171,6 +171,37 @@ cariRS.getBedDetails('covid', '3171515')
       lat: number,
       long: number
     }
+  }>`
+
+
+### v0.2.0
+
+- **findProvinces(keyword: string)**
+
+  *return* `Promise<{ provinces: { id: string, value: string }[] }>`
+
+- **findCities(keyword: string)**
+
+  *return* `Promise<{ cities: { id: string, value: string }[] }>`
+
+- **findHospitals(keyword: string, type?: covid | noncovid)**
+
+  *return* `Promise<{
+    hospitals: {
+      id: string,
+      name: string,
+      address: string,
+      phoneNumber?: string,
+      tags?: ('covid' | 'noncovid')[],
+      province?: {
+        id: string,
+        value: string
+      },
+      city?: {
+        id: string,
+        value: string
+      },
+    }[]
   }>`
 
 ## License

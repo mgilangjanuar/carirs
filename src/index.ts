@@ -17,6 +17,7 @@ interface Hospital {
     id: string,
     name: string,
     address: string,
+    tags?: ('covid' | 'noncovid')[],
     province?: {
       id: string,
       value: string
@@ -161,7 +162,7 @@ export class CariRS {
         }
         return result
       }
-      return { hospitals: hospitals.filter(match) }
+      return { hospitals: hospitals.filter(match) } as Hospital
     }
   }
 
@@ -176,7 +177,7 @@ export class CariRS {
       }
       return result
     }
-    return { hospitals: hospitals.filter(match) }
+    return { hospitals: hospitals.filter(match) } as Hospital
   }
 
   public async getMaps(hospitalId: string): Promise<Maps> {
